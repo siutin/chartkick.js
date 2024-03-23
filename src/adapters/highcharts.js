@@ -168,13 +168,11 @@ export default class {
     const series = chart.data;
     for (let i = 0; i < series.length; i++) {
       series[i].name = series[i].name || "Value";
-      const data = series[i].data;
+
       if (chart.xtype === "datetime") {
-        for (let j = 0; j < data.length; j++) {
-          data[j][0] = data[j][0].getTime();
-        }
+        series[i].data = series[i].data.map(([x, y]) => ({ x: x.getTime(), y }))
       } else if (chart.xtype === "number") {
-        data.sort(sortByNumberSeries);
+        series[i].data = series[i].data.sort(sortByNumberSeries).map(([x, y]) => ({ x, y }))
       }
       series[i].marker = {symbol: "circle"};
       if (chart.options.points === false) {
