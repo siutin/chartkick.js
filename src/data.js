@@ -26,7 +26,14 @@ function formatSeriesData(data, keyType) {
 
   const r = [];
   for (let i = 0; i < data.length; i++) {
-    r.push(Object.assign(data[i], { x: keyFunc(data[i].x), y: toFloat(data[i].y) }));
+    let o = {}
+    if (Object.prototype.hasOwnProperty.call(data[i], 'x')) {
+      o.x = keyFunc(data[i].x)
+    }
+    if (Object.prototype.hasOwnProperty.call(data[i], 'y')) {
+      o.y = toFloat(data[i].y)
+    }
+    r.push(Object.assign(data[i], o));
   }
   return r;
 }
@@ -101,7 +108,14 @@ function processSeries(chart, keyType, noDatetime) {
 function processSimple(chart) {
   const perfectData = chart.rawData;
   for (let i = 0; i < perfectData.length; i++) {
-    perfectData[i] = Object.assign(perfectData[i], { x: toStr(perfectData[i].x), y: toFloat(perfectData[i].y) });
+    let o = {}
+    if (Object.prototype.hasOwnProperty.call(perfectData[i], 'x')) {
+      o.x = toStr(perfectData[i].x)
+    }
+    if (Object.prototype.hasOwnProperty.call(perfectData[i], 'y')) {
+      o.y = toFloat(perfectData[i].y)
+    }
+    perfectData[i] = Object.assign(perfectData[i], o);
   }
   return perfectData;
 }

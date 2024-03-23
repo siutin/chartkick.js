@@ -169,7 +169,14 @@ export default class {
 
     function toObjectItem (o) {
       if (isPlainObject(o)) {
-        return Object.assign(o, { x: o.x.getTime(), y: o.y })
+        let newObject = {}
+        if (Object.prototype.hasOwnProperty.call(o, 'x')) {
+          newObject.x = o.x.getTime()
+        }
+        if (Object.prototype.hasOwnProperty.call(o, 'y')) {
+          newObject.y = o.y
+        }
+        return Object.assign(o, newObject)
       }
       return { x: o[0].getTime(), y: o[1] }
     }
