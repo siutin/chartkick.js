@@ -3,7 +3,7 @@ import { isArray, isPlainObject, toStr, toFloat, toDate, toArr, isDate, isNumber
 function formatSeriesBubble(data) {
   const r = [];
   for (let i = 0; i < data.length; i++) {
-    r.push([toFloat(data[i][0]), toFloat(data[i][1]), toFloat(data[i][2])]);
+    r.push(Object.assign(data[i], { x: toFloat(data[i].x), y: toFloat(data[i].y), z: toFloat(data[i].z) }));
   }
   return r;
 }
@@ -26,7 +26,7 @@ function formatSeriesData(data, keyType) {
 
   const r = [];
   for (let i = 0; i < data.length; i++) {
-    r.push([keyFunc(data[i][0]), toFloat(data[i][1])]);
+    r.push(Object.assign(data[i], { x: keyFunc(data[i].x), y: toFloat(data[i].y) }));
   }
   return r;
 }
@@ -49,9 +49,9 @@ function detectXType(series, noDatetime, options) {
 
 function detectXTypeWithFunction(series, func) {
   for (let i = 0; i < series.length; i++) {
-    const data = toArr(series[i].data);
+    const data = series[i].data;
     for (let j = 0; j < data.length; j++) {
-      if (!func(data[j][0])) {
+      if (!func(data[j].x)) {
         return false;
       }
     }
@@ -85,12 +85,8 @@ function processSeries(chart, keyType, noDatetime) {
     series = [{name: opts.label, data: series}];
   }
 
-  // convert to array
   // must come before dataEmpty check
   series = copySeries(series);
-  for (let i = 0; i < series.length; i++) {
-    series[i].data = toArr(series[i].data);
-  }
 
   chart.xtype = keyType || (opts.discrete ? "string" : detectXType(series, noDatetime, opts));
 
@@ -103,9 +99,9 @@ function processSeries(chart, keyType, noDatetime) {
 }
 
 function processSimple(chart) {
-  const perfectData = toArr(chart.rawData);
+  const perfectData = chart.rawData;
   for (let i = 0; i < perfectData.length; i++) {
-    perfectData[i] = [toStr(perfectData[i][0]), toFloat(perfectData[i][1])];
+    perfectData[i] = Object.assign(perfectData[i], { x: toStr(perfectData[i].x), y: toFloat(perfectData[i].y) });
   }
   return perfectData;
 }

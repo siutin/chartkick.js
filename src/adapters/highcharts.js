@@ -1,4 +1,4 @@
-import { formatValue, isArray, jsOptionsFunc, merge, sortByNumber, sortByNumberSeries } from "../helpers";
+import { formatValue, isArray, isPlainObject, jsOptionsFunc, merge, sortByNumber, sortByNumberSeries } from "../helpers";
 
 const defaultOptions = {
   chart: {},
@@ -166,15 +166,23 @@ export default class {
     setFormatOptions(chart, options, chartType);
 
     const series = chart.data;
+
+    function toObjectItem (o) {
+      if (isPlainObject(o)) {
+        return Object.assign(o, { x: o.x.getTime(), y: o.y })
+      }
+      return { x: o[0].getTime(), y: o[1] }
+    }
+
     for (let i = 0; i < series.length; i++) {
       series[i].name = series[i].name || "Value";
 
       if (chart.xtype === "datetime") {
-        series[i].data = series[i].data.map(([x, y]) => ({ x: x.getTime(), y }))
+        series[i].data = series[i].data.map(toObjectItem)
       } else if (chart.xtype === "number") {
-        series[i].data = series[i].data.sort(sortByNumberSeries).map(([x, y]) => ({ x, y }))
+        series[i].data = series[i].data.map(toObjectItem).sort((a, b) => sortByNumberSeries(a.x, b.x))
       }
-      series[i].marker = {symbol: "circle"};
+      series[i].marker = Object.assign({ symbol: "circle" }, series[i].marker);
       if (chart.options.points === false) {
         series[i].marker.enabled = false;
       }
